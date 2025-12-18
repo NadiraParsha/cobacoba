@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat
 import com.example.smartfan.api.ApiClient
 import com.example.smartfan.api.FanControlRequest
 import com.example.smartfan.api.FanData
-import com.example.smartfan.api.SetAutoModeRequest // Import Data Class baru
+import com.example.smartfan.api.SetAutoModeRequest
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -48,7 +48,7 @@ class Dashboard : AppCompatActivity() {
     private lateinit var btnAutoMode: Button
     private lateinit var lineChart: LineChart
     private lateinit var historyTableLayout: TableLayout
-    private lateinit var connectionStatusIndicator: View
+    private lateinit var connectionStatusIndicator: View // Indikator Pojok Kanan Atas
 
     // --- Variabel Logika ---
     private var isAutoModeEnabled = false
@@ -111,14 +111,10 @@ class Dashboard : AppCompatActivity() {
         btnTurnOn.setOnClickListener { sendFanCommand("on") }
         btnTurnOff.setOnClickListener { sendFanCommand("off") }
 
-        // --- Logika Tombol Auto Mode Diubah Total ---
         btnAutoMode.setOnClickListener {
-            // Balik status mode auto secara lokal terlebih dahulu
             isAutoModeEnabled = !isAutoModeEnabled
-            // Update UI berdasarkan state baru
             updateAutoModeButtonState()
             updateAiStatusUi(isAutoModeEnabled)
-            // Kirim state baru ke server
             sendAutoModeStatusToServer(isAutoModeEnabled)
         }
         updateAutoModeButtonState()
@@ -165,16 +161,17 @@ class Dashboard : AppCompatActivity() {
     private fun fetchFanData() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                // Mengambil data status kipas terbaru
                 val fanData = ApiClient.instance.getFanStatus()
+
                 withContext(Dispatchers.Main) {
-                    connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_connected)
+                    // Update tampilan data terbaru
                     updateStatusCardsAndPanel(fanData)
                     addLatestDataToChart(fanData)
-                    // --- Logika Auto Mode Dihapus Dari Sini ---
-                    // Tidak ada lagi pengecekan `if (isAutoModeEnabled)`
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    // Jika GAGAL request, otomatis OFFLINE (Merah)
                     connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_disconnected)
                     Log.e("DashboardApi", "Error fetching LATEST data: ${e.message}")
                     showError("Gagal terhubung ke perangkat.")
@@ -188,11 +185,33 @@ class Dashboard : AppCompatActivity() {
             try {
                 val historyListFromServer = ApiClient.instance.getSensorHistory()
                 withContext(Dispatchers.Main) {
-                    connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_connected)
+
+                    // --- LOGIKA UTAMA INDIKATOR ONLINE/OFFLINE ---
+                    if (historyListFromServer.isNotEmpty()) {
+                        // Ambil data paling terakhir dari list
+                        val latestData = historyListFromServer.lastOrNull() // Sesuaikan jika API Anda urutannya terbalik
+
+                        // Cek apakah alat benar-benar online berdasarkan waktu data terakhir
+                        // Fungsi isDeviceOnline mengecek apakah selisih waktu < 1 menit
+                        val isDeviceActive = ApiClient.isDeviceOnline(latestData?.timestamp)
+
+                        if (isDeviceActive) {
+                            // Data BARU (Alat Hidup) -> Hijau
+                            connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_connected)
+                        } else {
+                            // Data LAMA (Alat Mati) -> Merah
+                            connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_disconnected)
+                        }
+                    } else {
+                        // Jika data kosong sama sekali, anggap Connected (atau Disconnected tergantung preferensi)
+                        connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_connected)
+                    }
+
                     updateHistoryTable(historyListFromServer)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    // Error koneksi API -> Merah
                     connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_disconnected)
                     Log.e("DashboardApi", "Error fetching HISTORY data: ${e.message}")
                     Toast.makeText(this@Dashboard, "Gagal memuat riwayat data.", Toast.LENGTH_SHORT).show()
@@ -225,33 +244,53 @@ class Dashboard : AppCompatActivity() {
     }
 
     private fun updateHistoryTable(historyList: List<FanData>) {
-        historyTableLayout.removeViews(1, historyTableLayout.childCount - 1)
-        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        // Hapus data lama di tabel, sisakan header (index 0)
+        if (historyTableLayout.childCount > 1) {
+            historyTableLayout.removeViews(1, historyTableLayout.childCount - 1)
+        }
+
+        // Format jam saja untuk kolom pertama (tetap sederhana untuk tabel kecil)
+        val sdfTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        // Ambil 50 data terbaru, balik urutan agar yang terbaru di atas
         for (data in historyList.reversed().take(50)) {
             val tableRow = TableRow(this)
 
+            // Kolom Waktu
             val timeText = TextView(this).apply {
-                text = sdf.format(Date(data.timestamp))
-                gravity = Gravity.CENTER; setPadding(8, 8, 8, 8)
+                // Menggunakan timestamp Long yang ada di FanData
+                text = sdfTime.format(Date(data.timestamp))
+                gravity = Gravity.CENTER
+                setPadding(8, 8, 8, 8)
                 setTextColor(ContextCompat.getColor(context, R.color.text_disabled_color))
             }
+
+            // Kolom Suhu
             val suhuText = TextView(this).apply {
                 text = "${data.suhu}°C"
-                gravity = Gravity.CENTER; setPadding(8, 8, 8, 8)
+                gravity = Gravity.CENTER
+                setPadding(8, 8, 8, 8)
                 setTextColor(ContextCompat.getColor(context, R.color.text_disabled_color))
             }
+
+            // Kolom Kelembapan
             val lembapText = TextView(this).apply {
                 text = "${data.kelembapan}%"
-                gravity = Gravity.CENTER; setPadding(8, 8, 8, 8)
+                gravity = Gravity.CENTER
+                setPadding(8, 8, 8, 8)
                 setTextColor(ContextCompat.getColor(context, R.color.text_disabled_color))
             }
+
+            // Kolom Status Kipas
             val kipasText = TextView(this).apply {
                 val isFanOn = data.gas_status.equals("ON", ignoreCase = true)
                 text = if (isFanOn) "ON" else "OFF"
-                gravity = Gravity.CENTER; setPadding(8, 8, 8, 8)
+                gravity = Gravity.CENTER
+                setPadding(8, 8, 8, 8)
                 setTextColor(ContextCompat.getColor(context, if (isFanOn) R.color.fan_on_color else R.color.fan_off_color))
                 typeface = Typeface.DEFAULT_BOLD
             }
+
             tableRow.addView(timeText)
             tableRow.addView(suhuText)
             tableRow.addView(lembapText)
@@ -290,13 +329,6 @@ class Dashboard : AppCompatActivity() {
         else "Klik tombol AUTO untuk kontrol otomatis."
     }
 
-    // --- Fungsi applyAutoModeLogic Dihapus Total ---
-    /*
-    private fun applyAutoModeLogic(fanData: FanData) {
-        // Logika ini sekarang ada di server, jadi fungsi ini tidak lagi diperlukan.
-    }
-    */
-
     private fun sendFanCommand(command: String, showToast: Boolean = true) {
         if (showToast) {
             val message = if (command == "on") "Mengirim perintah NYALAKAN..." else "Mengirim perintah MATIKAN..."
@@ -308,6 +340,7 @@ class Dashboard : AppCompatActivity() {
                 val response = ApiClient.instance.controlFan(request)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
+                        // Jika berhasil kirim perintah, anggap online sementara
                         connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_connected)
                         if (showToast) {
                             val successMessage = if (command == "on") "Kipas BERHASIL dinyalakan" else "Kipas BERHASIL dimatikan"
@@ -316,6 +349,7 @@ class Dashboard : AppCompatActivity() {
                         fetchFanData()
                         fetchHistoryDataFromServer()
                     } else {
+                        // Gagal kirim perintah -> Offline
                         connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_disconnected)
                         Log.e("DashboardApi", "Command failed with code: ${response.code()} - ${response.message()}")
                         Toast.makeText(this@Dashboard, "Gagal mengirim perintah: ${response.message()}", Toast.LENGTH_LONG).show()
@@ -331,7 +365,6 @@ class Dashboard : AppCompatActivity() {
         }
     }
 
-    // --- Fungsi Baru Untuk Mengirim Status Auto Mode ke Server ---
     private fun sendAutoModeStatusToServer(isEnabled: Boolean) {
         val message = if (isEnabled) "Mengaktifkan Mode Auto di Server" else "Menonaktifkan Mode Auto di Server"
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -342,7 +375,6 @@ class Dashboard : AppCompatActivity() {
                 val response = ApiClient.instance.setAutoMode(request)
                 withContext(Dispatchers.Main) {
                     if (!response.isSuccessful) {
-                        // Jika gagal, kembalikan state tombol ke posisi semula agar UI konsisten
                         Toast.makeText(this@Dashboard, "Gagal mengubah mode auto di server", Toast.LENGTH_LONG).show()
                         isAutoModeEnabled = !isEnabled
                         updateAutoModeButtonState()
@@ -351,7 +383,6 @@ class Dashboard : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    // Jika gagal, kembalikan juga state tombol ke posisi semula
                     Toast.makeText(this@Dashboard, "Error koneksi: ${e.message}", Toast.LENGTH_LONG).show()
                     isAutoModeEnabled = !isEnabled
                     updateAutoModeButtonState()
@@ -361,15 +392,10 @@ class Dashboard : AppCompatActivity() {
         }
     }
 
-
     private fun showError(message: String) {
+        // Tampilkan error dan ubah indikator jadi merah
+        connectionStatusIndicator.setBackgroundResource(R.drawable.indicator_disconnected)
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-        val errorColor = ContextCompat.getColor(this, R.color.text_disabled_color)
-        tvTemperatureValue.text = "--°C"; tvHumidityValue.text = "--%"
-        tvFanStatus.text = "N/A"; tvFanStatus.setTextColor(errorColor)
-        tvAiStatus.text = "N/A"; tvAiStatus.setTextColor(errorColor)
-        tvRoomCondition.text = "Kondisi Ruangan: --"
-        tvSystemFanStatus.text = "Status Kipas: GAGAL TERHUBUNG"
     }
 
     private fun handleMenuClick(menuItem: MenuItem): Boolean {
@@ -381,8 +407,6 @@ class Dashboard : AppCompatActivity() {
 
     private fun logoutUser() {
         stopPeriodicDataFetching()
-        // Anda mungkin ingin memberi tahu server bahwa pengguna telah logout
-        // CoroutineScope(Dispatchers.IO).launch { ApiClient.instance.logoutUser() } // Contoh
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
