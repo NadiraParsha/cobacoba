@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "214271245659",
+    "project_id": "strawberrydev-339ef",
+    "storage_bucket": "strawberrydev-339ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214271245659:android:49cb4170fdf67a2a86ae7e",
+        "android_client_info": {
+          "package_name": "com.example.smartfan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIaz-EeKuqAi0KADlYvYi9gq5Rpq5pNPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

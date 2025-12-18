@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3B0270"
+    tools:context=".Dashboard">
+
+    <!-- Latar Belakang Header (Tidak berubah) -->
+    <View
+        android:id="@+id/headerBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#2A0050"
+        app:layout_constraintBottom_toBottomOf="@+id/ivHeaderLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="-16dp"/>
+
+    <!-- Header Kiri: Tombol Menu (Tidak berubah) -->
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Tombol Menu"
+        android:src="@drawable/outline_air_24"
+        app:layout_constraintBottom_toBottomOf="@+id/headerBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/headerBackground"
+        app:tint="@color/white" />
+
+    <!-- Logo dan Judul (Tidak berubah) -->
+    <ImageView
+        android:id="@+id/ivHeaderLogo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/outline_air_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/tvHeaderTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="Smart Fan"
+        android:textColor="#EDE7F6"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/ivHeaderLogo"
+        app:layout_constraintStart_toEndOf="@+id/ivHeaderLogo"
+        app:layout_constraintTop_toTopOf="@+id/ivHeaderLogo" />
+
+    <!-- Tombol Refresh (Tidak berubah) -->
+    <ImageButton
+        android:id="@+id/btnRefresh"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_refresh_background"
+        android:src="@drawable/outline_directory_sync_24"
+        app:layout_constraintBottom_toBottomOf="@+id/ivHeaderLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ivHeaderLogo"
+        app:tint="@color/black"
+        tools:ignore="ContentDescription" />
+
+    <!-- Indikator Koneksi (Tidak berubah) -->
+    <View
+        android:id="@+id/connectionStatusIndicator"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/indicator_disconnected"
+        app:layout_constraintBottom_toBottomOf="@+id/btnRefresh"
+        app:layout_constraintEnd_toStartOf="@+id/btnRefresh"
+        app:layout_constraintTop_toTopOf="@+id/btnRefresh" />
+
+
+    <!-- Kontainer Kartu Status (Tidak berubah) -->
+    <LinearLayout
+        android:id="@+id/statusContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerBackground"
+        app:layout_constraintVertical_bias="0.08"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_middle">
+        <!-- Kartu Suhu -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:padding="12dp"
+            android:background="@drawable/status_card_background">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/outline_accessibility_new_24"
+                app:tint="#FF8A80" />
+            <TextView
+                android:id="@+id/tvTemperatureValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="--°C"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Suhu"
+                android:textColor="#C5CAE9"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <!-- Kartu Lembap -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:padding="12dp"
+            android:background="@drawable/status_card_background">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/outline_air_24"
+                app:tint="#82B1FF" />
+            <TextView
+                android:id="@+id/tvHumidityValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="--%"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lembap"
+                android:textColor="#C5CAE9"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <!-- Kartu Kipas -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:padding="12dp"
+            android:background="@drawable/status_card_background">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/outline_air_purifier_gen_24"
+                app:tint="#B9F6CA" />
+            <TextView
+                android:id="@+id/tvFanStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="N/A"
+                android:textColor="#C5CAE9"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kipas"
+                android:textColor="#C5CAE9"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <!-- Kartu AI Mode -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:padding="12dp"
+            android:background="@drawable/status_card_background">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/outline_android_24"
+                app:tint="#FFE57F" />
+            <TextView
+                android:id="@+id/tvAiStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="N/A"
+                android:textColor="#C5CAE9"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI Mode"
+                android:textColor="#C5CAE9"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Guideline (Tidak berubah) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.62" />
+
+    <!-- Grafik (Tidak berubah) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/chartCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="#2A0050"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/historyCard"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_middle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statusContainer">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Data Historis"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/lineChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Panel Status Sistem (Tidak berubah) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/systemStatusCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="#2A0050"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/historyCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline_middle"
+        app:layout_constraintTop_toTopOf="@+id/chartCard">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status Sistem"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Detail Status (Tidak berubah) -->
+            <TextView
+                android:id="@+id/tvRoomCondition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/outline_air_24"
+                android:drawablePadding="8dp"
+                android:drawableTint="#FF8A80"
+                android:text="Kondisi Ruangan: --"
+                android:textColor="#FF8A80" />
+
+            <TextView
+                android:id="@+id/tvSystemFanStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/outline_air_purifier_gen_24"
+                android:drawablePadding="8dp"
+                android:drawableTint="#B9F6CA"
+                android:text="Status Kipas: --"
+                android:textColor="#B9F6CA" />
+
+            <TextView
+                android:id="@+id/tvSystemAiStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/outline_android_24"
+                android:drawablePadding="8dp"
+                android:drawableTint="#FFE57F"
+                android:text="Status AI: NONAKTIF"
+                android:textColor="#FFE57F" />
+
+            <!-- Divider (Tidak berubah) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="#4A277E" />
+
+            <!-- Rekomendasi AI (Tidak berubah) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rekomendasi AI"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvAiRecommendation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingMultiplier="1.2"
+                android:text="Aktifkan mode auto untuk kontrol otomatis."
+                android:textColor="#C5CAE9" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- Riwayat Data Sensor (Tidak berubah) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/historyCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="#2A0050"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/controlButtonsLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chartCard"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="160dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Riwayat Data Sensor"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="16dp">
+                <TableLayout
+                    android:id="@+id/historyTableLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1,2,3">
+                    <!-- Header Tabel -->
+                    <TableRow android:background="#4A277E">
+                        <TextView android:text="Waktu" android:textColor="@color/white" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+                        <TextView android:text="Suhu" android:textColor="@color/white" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+                        <TextView android:text="Lembap" android:textColor="@color/white" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+                        <TextView android:text="Kipas" android:textColor="@color/white" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+                    </TableRow>
+                </TableLayout>
+            </ScrollView>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- ▼▼▼ PERUBAHAN PADA TEKS TOMBOL KONTROL ▼▼▼ -->
+    <RelativeLayout
+        android:id="@+id/controlButtonsLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Tombol Turn On (Kiri) -->
+        <Button
+            android:id="@+id/btnTurnOn"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="24dp"
+            android:backgroundTint="#4CAF50"
+            android:text="ON"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <!-- Tombol Turn Off (Kanan) -->
+        <Button
+            android:id="@+id/btnTurnOff"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="24dp"
+            android:backgroundTint="#F44336"
+            android:text="OFF"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <!-- Tombol AUTO Bulat (Tengah) -->
+        <Button
+            android:id="@+id/btnAutoMode"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/button_auto_selector"
+            android:text="AUTO"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+    <!-- ▲▲▲ AKHIR DARI PERUBAHAN ▲▲▲ -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

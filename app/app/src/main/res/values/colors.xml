@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warna-warna Anda yang sudah ada -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Contoh warna lain yang mungkin sudah Anda buat -->
+    <color name="fan_on_color">#B9F6CA</color>
+    <color name="fan_off_color">#FF8A80</color>
+    <color name="ai_on_color">#FFE57F</color>
+
+    <!-- ▼▼▼ TAMBAHKAN BARIS INI UNTUK MEMPERBAIKI ERROR ▼▼▼ -->
+    <color name="text_disabled_color">#C5CAE9</color>
+
+</resources>
+    

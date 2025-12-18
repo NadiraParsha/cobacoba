@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State ketika tombol di-check (mode auto aktif) -->
+    <item android:state_checked="true">
+        <shape android:shape="oval">
+            <solid android:color="@color/ai_on_color" /> <!-- Warna hijau saat aktif -->
+            <stroke android:width="2dp" android:color="@color/white" />
+        </shape>
+    </item>
+    <!-- State default (mode auto tidak aktif) -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/text_disabled_color" /> <!-- Warna abu-abu saat nonaktif -->
+        </shape>
+    </item>
+</selector>

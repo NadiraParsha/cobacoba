@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Smart Fan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a237e, #534bae);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 380px;
+            z-index: 10;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h3 { 
+            margin-bottom: 30px; 
+            font-weight: 600; 
+            text-align: center; 
+            font-size: 1.8rem; 
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 0.25rem rgba(249, 168, 38, 0.25);
+            color: #fff;
+        }
+
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+        .form-label { 
+            font-weight: 500; 
+            margin-bottom: 8px; 
+            display: block; 
+        }
+
+        .btn-custom {
+            background: #f9a826;
+            border: none;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-custom:hover {
+            background: #ffb300;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-small { 
+            text-align: center; 
+            margin-top: 15px; 
+        }
+
+        /* Snowflake styling */
+        .snowflakes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1.2em;
+            animation: fall linear forwards;
+            user-select: none;
+        }
+
+        @keyframes fall { 
+            to { transform: translateY(105vh) rotate(360deg); } 
+        }
+
+        @media (max-width: 480px) { 
+            .login-box { width: 90%; padding: 30px 20px; } 
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowflakes container -->
+    <div class="snowflakes" id="snowflakes"></div>
+
+    <div class="login-box">
+        <h3 class="mb-4 text-center">Smart Fan Login</h3>
+
+        {% if form.errors %}
+            <div class="alert alert-warning text-center py-2">
+                Username atau password salah.
+            </div>
+        {% endif %}
+
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert alert-info text-center py-2">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form login ditangani oleh JS -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Masukkan username" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Masukkan password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-custom">Login</button>
+        </form>
+
+        <p class="text-small">
+            Belum punya akun?
+            <a href="{% url 'register_page' %}" class="text-warning text-decoration-none">Daftar di sini</a>
+        </p>
+    </div>
+
+    <!-- Snowflake animation -->
+    <script>
+        function createSnowflakes() {
+            const snowflakesContainer = document.getElementById('snowflakes');
+            const snowflakeSymbols = ['❄', '✦', '❅', '❆'];
+            for (let i = 0; i < 50; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
+                snowflake.style.left = `${Math.random() * 100}vw`;
+                snowflake.style.animationDuration = `${10 + Math.random() * 20}s`;
+                snowflake.style.animationDelay = `${Math.random() * 5}s`;
+                snowflake.style.fontSize = `${0.8 + Math.random() * 1.2}em`;
+                snowflake.style.opacity = `${0.3 + Math.random() * 0.4}`;
+                snowflakesContainer.appendChild(snowflake);
+            }
+        }
+        window.addEventListener('load', createSnowflakes);
+    </script>
+
+    <!-- Hanya login.js yang dipanggil -->
+    <script src="{% static 'dashboard/js/login.js' %}"></script>
+</body>
+</html>
